@@ -11,8 +11,7 @@ N=length(x);
 interface1=length(x1);
 interface2=N-length(x3);
 
-dx(1,1)=0.5;
-for i=2:length(x)-1
+for i=1:length(x)-1
     dx(i,1)=0;
     dx(i,1)= x(1,i+1)-x(1,i);
 end
