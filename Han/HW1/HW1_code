@@ -95,6 +95,6 @@ for i=1:1:N
 end
 
 plot(X, phi, 'o');
-xlabel('Position')
+xlabel('Position[nm]')
 ylabel('Electrostatic potential(V)')
 title('1D Laplacian equation solver')
