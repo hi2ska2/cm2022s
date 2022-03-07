@@ -1,9 +1,8 @@
 clear; close all; clc;
 
-w1= 6; w2=11; w3=8; % width
-Width=w1+w2+w3;
+w1= 6; w2=11; w3=8; Width=w1+w2+w3; % width
 
-%단순히 mesh사이즈를 다르게 (delta_x1=0.5, delta_x2=0.2, delta_x3=0.4)
+% 단순히 mesh사이즈를 다르게 (delta_x1=0.5, delta_x2=0.2, delta_x3=0.4)
 dx1=0.5; dx2=0.2; dx3=0.4;
 x1=0:dx1:w1;  x2=w1+dx2:dx2:w1+w2; x3=w1+w2+dx3:dx3:w1+w2+w3;
 x=[x1 x2 x3];
@@ -28,7 +27,7 @@ end
 b=[zeros(N-1,1); ones(1,1)];
 phi=A\b;
 
-%Analytic solution
+%%% Analytic solution %%%
 x_anl=0:0.001:Width;
 phi_analytic=x_anl/(Width);
 
