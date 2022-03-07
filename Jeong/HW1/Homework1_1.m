@@ -18,7 +18,7 @@ for i=2:length(x)-1
 end
 
 A=zeros(N,N);
-A(1,1)=1; A(N,N)=1;
+A(1,1)=1; A(N,N)=1; 
 for i=2:N-1
     v=[1/dx(i-1,1) -1/dx(i-1,1)-1/dx(i,1) 1/dx(i,1)];
     for j=1:3
