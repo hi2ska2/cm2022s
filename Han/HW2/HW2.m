@@ -1,12 +1,14 @@
+% HW2
 % written by Seong-Min, Han
 
 P = zeros(3,2);
 P(1,:) = [0 0];
-P(2,:) = [1 0];
-P(3,:) = [1 1]; % case1) 
+P(2,:) = [1 0]; 
+P(3,:) = [1 1]; % case1,2)
 % P(3,:) = [0.5 0.5*sqrt(3)]; % case2) An equilateral triangle
+% P(2,:) = [3 0]; % case3)
 % P(3,:) = [3 4]; % case3)
-% P(3,:) = [2/3 3/2]; case4) % acute triangle
+% P(3,:) = [2/3 3/2]; % case4) % acute triangle
 
 v21 = P(2,:)-P(1,:);
 v31 = P(3,:)-P(1,:);
