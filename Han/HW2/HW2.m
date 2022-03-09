@@ -10,8 +10,8 @@ P(3,:) = [1 1]; % case1)
 
 v21 = P(2,:)-P(1,:);
 v31 = P(3,:)-P(1,:);
-norm21 = norm(P(2,:)-P(1,:));
-norm31 = norm(P(3,:)-P(1,:));
+norm21 = norm(v21);
+norm31 = norm(v31);
 area = sqrt(norm21*norm21 * norm31*norm31- dot(v21,v31)*dot(v21,v31))/2;
 
 L = zeros(3,1);
