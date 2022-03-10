@@ -1,0 +1,11 @@
+HW3
+
+Due: AM 08:00, March 15, 2022
+
+1. Solve the Laplace equation for a circle.
+At the top point, the solution is 1.
+At the bottom point, the solution is 0.
+For other boundary nodes, apply the homogenous Neumann boundary condition.
+
+2. Read a structure specified by a *.vertex file and a *.element file.
+Visualize the read structure.
