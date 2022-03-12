@@ -47,7 +47,8 @@ for i=1:numf
         edge(i,j) = sqrt(rad(i,1)*rad(i,1) - (len(i,j)/2)*(len(i,j)/2));
     end
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% A, b, phi matrix 
 A = zeros(numv,numv);
 b = zeros(numv,1);
 for i=1:numf
