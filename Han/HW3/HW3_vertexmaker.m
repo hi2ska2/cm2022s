@@ -2,7 +2,7 @@
 %%% written by Seong-Min, Han
 N = 4; % 가중치
 numc = 4; % circle의 개수
-numv = 2*numc*numc+2*numc+1; % Vertex 개수
+numv = 2*numc*numc + 2*numc + 1; % Vertex 개수
 Vertex = zeros(numv, 2);
 
 R = zeros(numc,1); % 각 원의 반지름
