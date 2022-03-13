@@ -1,6 +1,7 @@
 %%% HW3
 %%% written by Seong-Min, Han
 %%% Due: AM 08:00, March 15, 2022
+
 N = 4; % 가중치 % 각 원의 점의 개수는 N * numc
 numc = 4; % circle 개수 
 numf = (2*numc) * (2*numc); % face 개수
@@ -69,9 +70,11 @@ A(2*numc*numc+numc+2,2*numc*numc+numc+2) = 1;
 b(2*numc*numc-numc+2,1) = 1;
 phi = A\ b;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% visualizing 
 figure
-patch('Faces',F,'Vertices',V,'EdgeColor','black','FaceColor','none','LineWidth',2, 'Marker','o');
+patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','interp','LineWidth',2, 'Marker','o');
 title('structure')
+colorbar
 % % % plot(phi, 'b*')
 % % % xlabel('vertex')
 % % % ylabel('potential')
