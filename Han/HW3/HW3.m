@@ -6,7 +6,7 @@ N = 4; % 가중치 % 각 원의 점의 개수는 N * numc
 numc = 4; % circle 개수 
 numf = (2*numc) * (2*numc); % face 개수
 numv = 2*numc*numc + 2*numc + 1; % Vertex 개수
-V = importdata("Vertex.txt");
+V = importdata("vertex.txt");
 F = importdata("element.txt");
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% vertex와 vertex 사이의 거리
@@ -73,7 +73,7 @@ phi = A\ b;
 %%% visualizing 
 figure
 patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','interp','LineWidth',2, 'Marker','o');
-title('structure')
+title('structure visualizing')
 colorbar
 % % % plot(phi, 'b*')
 % % % xlabel('vertex')
