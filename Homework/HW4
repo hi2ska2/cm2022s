@@ -1,0 +1,11 @@
+HW4
+
+Due: AM 08:00, March 17, 2022
+
+1. Solve the Laplace equation for a circle.
+In this time, write a *.contact file (your own format).
+By using this file, you can specify the edges belonging to the terminals.
+
+2. Write a *.element file (your own format) to specify the yin and yang pattern.
+Visualize the read structure.
+Calculate the inteface edges.
