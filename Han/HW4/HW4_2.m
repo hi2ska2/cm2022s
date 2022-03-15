@@ -130,7 +130,7 @@ patch(rx, ry, 'black')
 patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','none','LineWidth',1, 'Marker','o');
 patch('Faces',Fox,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','red','LineWidth',1, 'Marker','o');
 patch('Faces',Fsi,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','blue','LineWidth',1, 'Marker','o');
-patch('Faces',save_edge,'Vertices',V, 'EdgeColor','yellow','FaceColor','none','LineWidth', 3, 'Marker','o');
+% patch('Faces',save_edge,'Vertices',V, 'EdgeColor','yellow','FaceColor','none','LineWidth', 3, 'Marker','o');
 title('structure visualizing')
 % % % plot(phi, 'b*')
 % % % xlabel('vertex')
