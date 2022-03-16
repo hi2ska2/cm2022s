@@ -1,7 +1,7 @@
 %%% HW4_2
 %%% written by Seong-Min, Han
 
-numf = 56; % face 개수
+numf = 4*numc*numc+8*numc-4; % face 개수
 numv = 2*numc*numc+6*numc+1; % Vertex 개수
 V = importdata("vertex.txt");
 F = importdata("element.txt");
@@ -119,14 +119,17 @@ for i=1:28
     end
 end
 
+t = linspace(0, 2);
+r1 = 1; r2 = 2; r3 = 2.5;
+r1x = r1*cospi(t); r2x = r2*cospi(t); r3x = r3*cospi(t);
+r1y = r1*sinpi(t); r2y = r2*sinpi(t); r3y = r3*sinpi(t);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% visualizing
-t = linspace(0, 2);
-r = 2.5;
-rx = r*cospi(t);
-ry = r*sinpi(t);
 figure
-patch(rx, ry, 'black')
+% patch(r3x, r3y, 'k')
+% patch(r2x, r2y, 'w')
+% patch(r1x, r1y, 'k')
 patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','none','LineWidth',1, 'Marker','o');
 patch('Faces',Fox,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','red','LineWidth',1, 'Marker','o');
 patch('Faces',Fsi,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','blue','LineWidth',1, 'Marker','o');
