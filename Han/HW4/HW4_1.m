@@ -1,7 +1,7 @@
 %%% HW4_1
 %%% written by Seong-Min, Han
 
-numf = 56; % face 개수
+numf = 4*numc*numc+8*numc-4; % face 개수
 numv = 2*numc*numc+6*numc+1; % Vertex 개수
 V = importdata("vertex.txt");
 F = importdata("element.txt");
@@ -70,17 +70,18 @@ for ii=1:3
     b(contact(1,1:3),1) = 1;
 end
 phi = A\ b;
+
+t = linspace(0, 2);
+r = 2.5;
+rx = r*cospi(t);
+ry = r*sinpi(t);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% visualizing 
-% t = linspace(0, 2);
-% r = 2.5;
-% rx = r*cospi(t);
-% ry = r*sinpi(t);
-% figure
-% patch(rx, ry, 'black')
-patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','none','LineWidth',1, 'Marker','o');
+figure
+patch(rx, ry, 'black')
+patch('Faces',F,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','interp','LineWidth',1, 'Marker','o');
 title('structure visualizing')
-% colorbar
+colorbar
 % % % plot(phi, 'b*')
 % % % xlabel('vertex')
 % % % ylabel('potential')
