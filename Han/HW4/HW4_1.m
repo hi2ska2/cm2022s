@@ -62,12 +62,16 @@ for i=1:numf
     end
 end
 
-for ii=1:3
-    A(contact(1,ii),:)= 0; %potential이 1인 영역
-    A(contact(2,ii),:)= 0; %potential이 0인 영역
-    A(contact(1,ii),contact(1,ii)) = 1;
-    A(contact(2,ii),contact(2,ii)) = 1;
-    b(contact(1,1:3),1) = 1;
+for ii=1:6
+    if ii<=3 %potential이 1인 영역
+        A(contact(ii,1),:)= 0; 
+        A(contact(ii,1),contact(ii,1)) = 1;
+        b(contact(1:3,1),1) = contact(1:3,2);
+    elseif ii>3 && ii<=6  %potential이 0인 영역
+        A(contact(ii,1),:)= 0; 
+        A(contact(ii,1),contact(ii,1)) = 1;
+        b(contact(4:6,1),1) = contact(4:6,2);
+    end
 end
 phi = A\ b;
 
