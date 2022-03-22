@@ -1,0 +1,7 @@
+HW6
+
+Due: AM 08:00, March 24, 2022
+
+1. Solve the source-free Poisson equation for several structures.
+Some of the enrolled students did it, but, in this time, test the sum rule.
+(It means that you must calculate the solution several times with different boundary values and make a sum of them.)
