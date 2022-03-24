@@ -1,0 +1,23 @@
+HW7
+
+Due: AM 08:00, March 29, 2022
+
+1. Consider a structure, which has multiple regions.
+Some of them are semiconductors and others are insulators.
+
+For this structure, you assign three variables:
+
+aaa: It is a variable defined on the entire structure.
+bbb: It is a variable defined only on the semiconductor regions.
+ccc: It is a variable defined only on the insulator regions.
+
+Actual values of three variables are not important.
+Determine them in your way.
+
+Construct a solution vector, x.
+When a user provides (Region,Vertex,Variable) information, your code should return an index.
+This index must satisfy the following relation:
+x(index) = Variable^Region_Vertex
+(You know the meaning of the above equation. If you don't, please send me a DM.)
+
+Of course, a user provides an invalid query, for example, asking the ccc variable for a semiconductor region, your code must make an error report.
