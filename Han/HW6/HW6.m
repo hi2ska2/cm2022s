@@ -322,7 +322,7 @@ title('Φ4 visualizing')
 % patch('Faces',F1,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','green','LineWidth',1, 'Marker','o');
 % patch('Faces',F2,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','cyan','LineWidth',1, 'Marker','o');
 % patch('Faces',F3,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','black','FaceColor','blue','LineWidth',1, 'Marker','o');
-% patch('Faces',save_edge1,'Vertices',V, 'EdgeColor','red','FaceColor','none','LineWidth', 3, 'Marker','o');
-% patch('Faces',save_edge2,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
-% patch('Faces',save_edge3,'Vertices',V, 'EdgeColor','yellow','FaceColor','none','LineWidth', 3, 'Marker','o');
+% patch('Faces',interedge1,'Vertices',V, 'EdgeColor','red','FaceColor','none','LineWidth', 3, 'Marker','o');
+% patch('Faces',interedge1,'Vertices',V, 'EdgeColor','yellow','FaceColor','none','LineWidth', 3, 'Marker','o');
+% patch('Faces',interedge1,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
 % title('structure & interfaces')
