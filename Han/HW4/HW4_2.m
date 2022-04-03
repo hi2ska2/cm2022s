@@ -54,12 +54,18 @@ A = zeros(numv,numv);
 b = zeros(numv,1);
 for i=1:numf
     for j=1:3
-        if j==3
-            A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,j)/len(i,j);
-            A(F(i,j),F(i,1)) = A(F(i,j),F(i,1)) + edge(i,j)/len(i,j);
-        else
-            A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,j)/len(i,j);
-            A(F(i,j),F(i,j+1)) = A(F(i,j),F(i,j+1)) + edge(i,j)/len(i,j);
+        if j==1
+            A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,1)/len(i,1) - edge(i,3)/len(i,3);
+            A(F(i,j),F(i,2)) = A(F(i,j),F(i,2)) + edge(i,1)/len(i,1);
+            A(F(i,j),F(i,3)) = A(F(i,j),F(i,3)) + edge(i,3)/len(i,3);
+        elseif j==2
+            A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,2)/len(i,2) - edge(i,1)/len(i,1);
+            A(F(i,j),F(i,3)) = A(F(i,j),F(i,3)) + edge(i,2)/len(i,2);
+            A(F(i,j),F(i,1)) = A(F(i,j),F(i,1)) + edge(i,1)/len(i,1);
+        elseif j==3
+            A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,3)/len(i,3) - edge(i,2)/len(i,2);
+            A(F(i,j),F(i,1)) = A(F(i,j),F(i,1)) + edge(i,3)/len(i,3);
+            A(F(i,j),F(i,2)) = A(F(i,j),F(i,2)) + edge(i,2)/len(i,2);        
         end
     end
 end
