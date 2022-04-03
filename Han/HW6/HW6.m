@@ -111,19 +111,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% A, b, phi matrix
 A = zeros(Vrow,Vrow);
-e1 = 11.7; e2 = 3.9; e3 = 11.7; 
-% for i=1:Frow
-%     for j=1:3
-%         if j==3
-%             A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,j)/len(i,j);
-%             A(F(i,j),F(i,1)) = A(F(i,j),F(i,1)) + edge(i,j)/len(i,j);
-%         else
-%             A(F(i,j),F(i,j)) = A(F(i,j),F(i,j)) - edge(i,j)/len(i,j);
-%             A(F(i,j),F(i,j+1)) = A(F(i,j),F(i,j+1)) + edge(i,j)/len(i,j);
-%         end
-%     end
-% end
-
+e1 = 11.7;
+e2 = 3.9;
+e3 = 11.7;
 edgeF1=zeros(F1row,3); lenF1=zeros(F1row,3);
 edgeF2=zeros(F2row,3); lenF2=zeros(F2row,3);
 edgeF3=zeros(F3row,3); lenF3=zeros(F3row,3);
@@ -152,41 +142,61 @@ for i=1:Frow
         end
     end
 end
+
 for i=1:F1row
     for j=1:3
-        if j==3
-            A(F1(i,j),F1(i,j)) = A(F1(i,j),F1(i,j)) - e1*edgeF1(i,j)/lenF1(i,j);
-            A(F1(i,j),F1(i,1)) = A(F1(i,j),F1(i,1)) + e1*edgeF1(i,j)/lenF1(i,j);
-        else
-            A(F1(i,j),F1(i,j)) = A(F1(i,j),F1(i,j)) - e1*edgeF1(i,j)/lenF1(i,j);
-            A(F1(i,j),F1(i,j+1)) = A(F1(i,j),F1(i,j+1)) + e1*edgeF1(i,j)/lenF1(i,j);
+        if j==1
+            A(F1(i,j),F1(i,j)) = A(F1(i,j),F1(i,j)) - e1*edgeF1(i,1)/lenF1(i,1) - e1*edgeF1(i,3)/lenF1(i,3);
+            A(F1(i,j),F1(i,2)) = A(F1(i,j),F1(i,2)) + e1*edgeF1(i,1)/lenF1(i,1);
+            A(F1(i,j),F1(i,3)) = A(F1(i,j),F1(i,3)) + e1*edgeF1(i,3)/lenF1(i,3);
+        elseif j==2
+            A(F1(i,j),F1(i,j)) = A(F1(i,j),F1(i,j)) - e1*edgeF1(i,2)/lenF1(i,2) - e1*edgeF1(i,1)/lenF1(i,1);
+            A(F1(i,j),F1(i,3)) = A(F1(i,j),F1(i,3)) + e1*edgeF1(i,2)/lenF1(i,2);
+            A(F1(i,j),F1(i,1)) = A(F1(i,j),F1(i,1)) + e1*edgeF1(i,1)/lenF1(i,1);
+        elseif j==3
+            A(F1(i,j),F1(i,j)) = A(F1(i,j),F1(i,j)) - e1*edgeF1(i,3)/lenF1(i,3) - e1*edgeF1(i,2)/lenF1(i,2);
+            A(F1(i,j),F1(i,1)) = A(F1(i,j),F1(i,1)) + e1*edgeF1(i,3)/lenF1(i,3);
+            A(F1(i,j),F1(i,2)) = A(F1(i,j),F1(i,2)) + e1*edgeF1(i,2)/lenF1(i,2);        
         end
     end
 end
 
 for i=1:F2row
     for j=1:3
-        if j==3
-            A(F2(i,j),F2(i,j)) = A(F2(i,j),F2(i,j)) - e2*edgeF2(i,j)/lenF2(i,j);
-            A(F2(i,j),F2(i,1)) = A(F2(i,j),F2(i,1)) + e2*edgeF2(i,j)/lenF2(i,j);
-        else
-            A(F2(i,j),F2(i,j)) = A(F2(i,j),F2(i,j)) - e2*edgeF2(i,j)/lenF2(i,j);
-            A(F2(i,j),F2(i,j+1)) = A(F2(i,j),F2(i,j+1)) + e2*edgeF2(i,j)/lenF2(i,j);
+        if j==1
+            A(F2(i,j),F2(i,j)) = A(F2(i,j),F2(i,j)) - e2*edgeF2(i,1)/lenF2(i,1) - e2*edgeF2(i,3)/lenF2(i,3);
+            A(F2(i,j),F2(i,2)) = A(F2(i,j),F2(i,2)) + e2*edgeF2(i,1)/lenF2(i,1);
+            A(F2(i,j),F2(i,3)) = A(F2(i,j),F2(i,3)) + e2*edgeF2(i,3)/lenF2(i,3);  
+        elseif j==2
+            A(F2(i,j),F2(i,j)) = A(F2(i,j),F2(i,j)) - e2*edgeF2(i,2)/lenF2(i,2) - e2*edgeF2(i,1)/lenF2(i,1);
+            A(F2(i,j),F2(i,3)) = A(F2(i,j),F2(i,3)) + e2*edgeF2(i,2)/lenF2(i,2);
+            A(F2(i,j),F2(i,1)) = A(F2(i,j),F2(i,1)) + e2*edgeF2(i,1)/lenF2(i,1);  
+        elseif j==3
+            A(F2(i,j),F2(i,j)) = A(F2(i,j),F2(i,j)) - e2*edgeF2(i,3)/lenF2(i,3) - e2*edgeF2(i,2)/lenF2(i,2);
+            A(F2(i,j),F2(i,1)) = A(F2(i,j),F2(i,1)) + e2*edgeF2(i,3)/lenF2(i,3);
+            A(F2(i,j),F2(i,2)) = A(F2(i,j),F2(i,2)) + e2*edgeF2(i,2)/lenF2(i,2);  
         end
     end
 end
 
 for i=1:F3row
     for j=1:3
-        if j==3
-            A(F3(i,j),F3(i,j)) = A(F3(i,j),F3(i,j)) - e3*edgeF3(i,j)/lenF3(i,j);
-            A(F3(i,j),F3(i,1)) = A(F3(i,j),F3(i,1)) + e3*edgeF3(i,j)/lenF3(i,j);
-        else
-            A(F3(i,j),F3(i,j)) = A(F3(i,j),F3(i,j)) - e3*edgeF3(i,j)/lenF3(i,j);
-            A(F3(i,j),F3(i,j+1)) = A(F3(i,j),F3(i,j+1)) + e3*edgeF3(i,j)/lenF3(i,j);
+        if j==1
+            A(F3(i,j),F3(i,j)) = A(F3(i,j),F3(i,j)) - e3*edgeF3(i,1)/lenF3(i,1) - e3*edgeF3(i,3)/lenF3(i,3);
+            A(F3(i,j),F3(i,2)) = A(F3(i,j),F3(i,2)) + e3*edgeF3(i,1)/lenF3(i,1);
+            A(F3(i,j),F3(i,3)) = A(F3(i,j),F3(i,3)) + e3*edgeF3(i,3)/lenF3(i,3);
+        elseif j==2
+            A(F3(i,j),F3(i,j)) = A(F3(i,j),F3(i,j)) - e3*edgeF3(i,2)/lenF3(i,2) - e3*edgeF3(i,1)/lenF3(i,1);
+            A(F3(i,j),F3(i,3)) = A(F3(i,j),F3(i,3)) + e3*edgeF3(i,2)/lenF3(i,2);
+            A(F3(i,j),F3(i,1)) = A(F3(i,j),F3(i,1)) + e3*edgeF3(i,1)/lenF3(i,1);
+        elseif j==3
+            A(F3(i,j),F3(i,j)) = A(F3(i,j),F3(i,j)) - e3*edgeF3(i,3)/lenF3(i,3) - e3*edgeF3(i,2)/lenF3(i,2);
+            A(F3(i,j),F3(i,1)) = A(F3(i,j),F3(i,1)) + e3*edgeF3(i,3)/lenF3(i,3);
+            A(F3(i,j),F3(i,2)) = A(F3(i,j),F3(i,2)) + e3*edgeF3(i,2)/lenF3(i,2);
         end
     end
 end
+
 
 for i=1:Frow
     for j=1:3
