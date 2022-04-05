@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% HW9
+%%% HW10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 V = importdata("vertex.txt"); Vrow = size(V,1);
 F = importdata("element.txt"); Frow = size(F,1);
@@ -23,26 +23,40 @@ for i=1:size(VFT,1)
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-VF1_2nd = zeros(VF1row,2);
-a=1;
+VF1_aaa = zeros(VF1row,2);
+aa=1;
 for i=1:VF1row
-    VF1_2nd(i,1)=VF1(i);
-    VF1_2nd(i,2)=a;
-    a=a+1;
+    VF1_aaa(i,1)=VF1(i);
+    VF1_aaa(i,2)=aa;
+    aa=aa+1;
 end
-VF2_2nd = zeros(VF2row,2);
-res=VF1row+1;
+VF2_aaa = zeros(VF2row,2);
+bb=VF1row+1;
 for i=1:VF2row
-    VF2_2nd(i,1)=VF2(i);
-    VF2_2nd(i,2)=res;
-    res=res+1;
+    VF2_aaa(i,1)=VF2(i);
+    VF2_aaa(i,2)=bb;
+    bb=bb+1;
 end
-VF3_2nd = zeros(VF3row,2);
-c=VF1row+VF2row+1;
+VF3_aaa = zeros(VF3row,2);
+cc=VF1row+VF2row+1;
 for i=1:VF3row
-    VF3_2nd(i,1)=VF3(i);
-    VF3_2nd(i,2)=c;
-    c=c+1;
+    VF3_aaa(i,1)=VF3(i);
+    VF3_aaa(i,2)=cc;
+    cc=cc+1;
+end
+VF2_bb1 = zeros(VF2row,1);
+bb1 = VF1row+VF2row+VF3row+1;
+for i=1:VF2row
+    VF2_bb1(i,1)=VF2(i);
+    VF2_bb1(i,2)=bb1;
+    bb1=bb1+1;
+end
+VF2_bb2 = zeros(VF2row,1);
+bb2 = VF1row+VF2row+VF3row+VF2row+1;
+for i=1:VF2row
+    VF2_bb2(i,1)=VF2(i);
+    VF2_bb2(i,2)=bb2;
+    bb2=bb2+1;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% element 기반 vertex-vertex length
@@ -149,7 +163,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% A, b, phi matrix
 jac = zeros(VFTrow,VFTrow);
-e1 = 11.7; e2 = 3.9;  e3 = 11.7;
+e1 = 11.7;  e2 = 3.9;  e3 = 11.7;
 edgeF1=zeros(F1row,3); lenF1=zeros(F1row,3);
 edgeF2=zeros(F2row,3); lenF2=zeros(F2row,3);
 edgeF3=zeros(F3row,3); lenF3=zeros(F3row,3);
@@ -181,63 +195,63 @@ end
 
 for i=1:F1row
     for j=1:3
-        fa = find(F1(i,1)==VF1_2nd(:,1));
-        fb = find(F1(i,2)==VF1_2nd(:,1));
-        fc = find(F1(i,3)==VF1_2nd(:,1));
+        fa = find(F1(i,1)==VF1_aaa(:,1));
+        fb = find(F1(i,2)==VF1_aaa(:,1));
+        fc = find(F1(i,3)==VF1_aaa(:,1));
         if j==1
-            jac(VF1_2nd(fa,2),VF1_2nd(fa,2)) = jac(VF1_2nd(fa,2),VF1_2nd(fa,2)) - e1*edgeF1(i,1)/lenF1(i,1) - e1*edgeF1(i,3)/lenF1(i,3);
-            jac(VF1_2nd(fa,2),VF1_2nd(fb,2)) = jac(VF1_2nd(fa,2),VF1_2nd(fb,2)) + e1*edgeF1(i,1)/lenF1(i,1);
-            jac(VF1_2nd(fa,2),VF1_2nd(fc,2)) = jac(VF1_2nd(fa,2),VF1_2nd(fc,2)) + e1*edgeF1(i,3)/lenF1(i,3);
+            jac(VF1_aaa(fa,2),VF1_aaa(fa,2)) = jac(VF1_aaa(fa,2),VF1_aaa(fa,2)) - e1*edgeF1(i,1)/lenF1(i,1) - e1*edgeF1(i,3)/lenF1(i,3);
+            jac(VF1_aaa(fa,2),VF1_aaa(fb,2)) = jac(VF1_aaa(fa,2),VF1_aaa(fb,2)) + e1*edgeF1(i,1)/lenF1(i,1);
+            jac(VF1_aaa(fa,2),VF1_aaa(fc,2)) = jac(VF1_aaa(fa,2),VF1_aaa(fc,2)) + e1*edgeF1(i,3)/lenF1(i,3);
         elseif j==2
-            jac(VF1_2nd(fb,2),VF1_2nd(fb,2)) = jac(VF1_2nd(fb,2),VF1_2nd(fb,2)) - e1*edgeF1(i,2)/lenF1(i,2) - e1*edgeF1(i,1)/lenF1(i,1);
-            jac(VF1_2nd(fb,2),VF1_2nd(fc,2)) = jac(VF1_2nd(fb,2),VF1_2nd(fc,2)) + e1*edgeF1(i,2)/lenF1(i,2);
-            jac(VF1_2nd(fb,2),VF1_2nd(fa,2)) = jac(VF1_2nd(fb,2),VF1_2nd(fa,2)) + e1*edgeF1(i,1)/lenF1(i,1);
+            jac(VF1_aaa(fb,2),VF1_aaa(fb,2)) = jac(VF1_aaa(fb,2),VF1_aaa(fb,2)) - e1*edgeF1(i,2)/lenF1(i,2) - e1*edgeF1(i,1)/lenF1(i,1);
+            jac(VF1_aaa(fb,2),VF1_aaa(fc,2)) = jac(VF1_aaa(fb,2),VF1_aaa(fc,2)) + e1*edgeF1(i,2)/lenF1(i,2);
+            jac(VF1_aaa(fb,2),VF1_aaa(fa,2)) = jac(VF1_aaa(fb,2),VF1_aaa(fa,2)) + e1*edgeF1(i,1)/lenF1(i,1);
         elseif j==3
-            jac(VF1_2nd(fc,2),VF1_2nd(fc,2)) = jac(VF1_2nd(fc,2),VF1_2nd(fc,2)) - e1*edgeF1(i,3)/lenF1(i,3) - e1*edgeF1(i,2)/lenF1(i,2);
-            jac(VF1_2nd(fc,2),VF1_2nd(fa,2)) = jac(VF1_2nd(fc,2),VF1_2nd(fa,2)) + e1*edgeF1(i,3)/lenF1(i,3);
-            jac(VF1_2nd(fc,2),VF1_2nd(fb,2)) = jac(VF1_2nd(fc,2),VF1_2nd(fb,2)) + e1*edgeF1(i,2)/lenF1(i,2);        
+            jac(VF1_aaa(fc,2),VF1_aaa(fc,2)) = jac(VF1_aaa(fc,2),VF1_aaa(fc,2)) - e1*edgeF1(i,3)/lenF1(i,3) - e1*edgeF1(i,2)/lenF1(i,2);
+            jac(VF1_aaa(fc,2),VF1_aaa(fa,2)) = jac(VF1_aaa(fc,2),VF1_aaa(fa,2)) + e1*edgeF1(i,3)/lenF1(i,3);
+            jac(VF1_aaa(fc,2),VF1_aaa(fb,2)) = jac(VF1_aaa(fc,2),VF1_aaa(fb,2)) + e1*edgeF1(i,2)/lenF1(i,2);        
         end
     end
 end
 
 for i=1:F2row
     for j=1:3
-        fa = find(F2(i,1)==VF2_2nd(:,1));
-        fb = find(F2(i,2)==VF2_2nd(:,1));
-        fc = find(F2(i,3)==VF2_2nd(:,1));
+        fa = find(F2(i,1)==VF2_aaa(:,1));
+        fb = find(F2(i,2)==VF2_aaa(:,1));
+        fc = find(F2(i,3)==VF2_aaa(:,1));
         if j==1
-            jac(VF2_2nd(fa,2),VF2_2nd(fa,2)) = jac(VF2_2nd(fa,2),VF2_2nd(fa,2)) - e2*edgeF2(i,1)/lenF2(i,1) - e2*edgeF2(i,3)/lenF2(i,3);
-            jac(VF2_2nd(fa,2),VF2_2nd(fb,2)) = jac(VF2_2nd(fa,2),VF2_2nd(fb,2)) + e2*edgeF2(i,1)/lenF2(i,1);
-            jac(VF2_2nd(fa,2),VF2_2nd(fc,2)) = jac(VF2_2nd(fa,2),VF2_2nd(fc,2)) + e2*edgeF2(i,3)/lenF2(i,3);  
+            jac(VF2_aaa(fa,2),VF2_aaa(fa,2)) = jac(VF2_aaa(fa,2),VF2_aaa(fa,2)) - e2*edgeF2(i,1)/lenF2(i,1) - e2*edgeF2(i,3)/lenF2(i,3);
+            jac(VF2_aaa(fa,2),VF2_aaa(fb,2)) = jac(VF2_aaa(fa,2),VF2_aaa(fb,2)) + e2*edgeF2(i,1)/lenF2(i,1);
+            jac(VF2_aaa(fa,2),VF2_aaa(fc,2)) = jac(VF2_aaa(fa,2),VF2_aaa(fc,2)) + e2*edgeF2(i,3)/lenF2(i,3);  
         elseif j==2
-            jac(VF2_2nd(fb,2),VF2_2nd(fb,2)) = jac(VF2_2nd(fb,2),VF2_2nd(fb,2)) - e2*edgeF2(i,2)/lenF2(i,2) - e2*edgeF2(i,1)/lenF2(i,1);
-            jac(VF2_2nd(fb,2),VF2_2nd(fc,2)) = jac(VF2_2nd(fb,2),VF2_2nd(fc,2)) + e2*edgeF2(i,2)/lenF2(i,2);
-            jac(VF2_2nd(fb,2),VF2_2nd(fa,2)) = jac(VF2_2nd(fb,2),VF2_2nd(fa,2)) + e2*edgeF2(i,1)/lenF2(i,1);  
+            jac(VF2_aaa(fb,2),VF2_aaa(fb,2)) = jac(VF2_aaa(fb,2),VF2_aaa(fb,2)) - e2*edgeF2(i,2)/lenF2(i,2) - e2*edgeF2(i,1)/lenF2(i,1);
+            jac(VF2_aaa(fb,2),VF2_aaa(fc,2)) = jac(VF2_aaa(fb,2),VF2_aaa(fc,2)) + e2*edgeF2(i,2)/lenF2(i,2);
+            jac(VF2_aaa(fb,2),VF2_aaa(fa,2)) = jac(VF2_aaa(fb,2),VF2_aaa(fa,2)) + e2*edgeF2(i,1)/lenF2(i,1);  
         elseif j==3
-            jac(VF2_2nd(fc,2),VF2_2nd(fc,2)) = jac(VF2_2nd(fc,2),VF2_2nd(fc,2)) - e2*edgeF2(i,3)/lenF2(i,3) - e2*edgeF2(i,2)/lenF2(i,2);
-            jac(VF2_2nd(fc,2),VF2_2nd(fa,2)) = jac(VF2_2nd(fc,2),VF2_2nd(fa,2)) + e2*edgeF2(i,3)/lenF2(i,3);
-            jac(VF2_2nd(fc,2),VF2_2nd(fb,2)) = jac(VF2_2nd(fc,2),VF2_2nd(fb,2)) + e2*edgeF2(i,2)/lenF2(i,2);  
+            jac(VF2_aaa(fc,2),VF2_aaa(fc,2)) = jac(VF2_aaa(fc,2),VF2_aaa(fc,2)) - e2*edgeF2(i,3)/lenF2(i,3) - e2*edgeF2(i,2)/lenF2(i,2);
+            jac(VF2_aaa(fc,2),VF2_aaa(fa,2)) = jac(VF2_aaa(fc,2),VF2_aaa(fa,2)) + e2*edgeF2(i,3)/lenF2(i,3);
+            jac(VF2_aaa(fc,2),VF2_aaa(fb,2)) = jac(VF2_aaa(fc,2),VF2_aaa(fb,2)) + e2*edgeF2(i,2)/lenF2(i,2);  
         end
     end
 end
 
 for i=1:F3row
     for j=1:3
-        fa = find(F3(i,1)==VF3_2nd(:,1));
-        fb = find(F3(i,2)==VF3_2nd(:,1));
-        fc = find(F3(i,3)==VF3_2nd(:,1));
+        fa = find(F3(i,1)==VF3_aaa(:,1));
+        fb = find(F3(i,2)==VF3_aaa(:,1));
+        fc = find(F3(i,3)==VF3_aaa(:,1));
         if j==1
-            jac(VF3_2nd(fa,2),VF3_2nd(fa,2)) = jac(VF3_2nd(fa,2),VF3_2nd(fa,2)) - e3*edgeF3(i,1)/lenF3(i,1) - e3*edgeF3(i,3)/lenF3(i,3);
-            jac(VF3_2nd(fa,2),VF3_2nd(fb,2)) = jac(VF3_2nd(fa,2),VF3_2nd(fb,2)) + e3*edgeF3(i,1)/lenF3(i,1);
-            jac(VF3_2nd(fa,2),VF3_2nd(fc,2)) = jac(VF3_2nd(fa,2),VF3_2nd(fc,2)) + e3*edgeF3(i,3)/lenF3(i,3);
+            jac(VF3_aaa(fa,2),VF3_aaa(fa,2)) = jac(VF3_aaa(fa,2),VF3_aaa(fa,2)) - e3*edgeF3(i,1)/lenF3(i,1) - e3*edgeF3(i,3)/lenF3(i,3);
+            jac(VF3_aaa(fa,2),VF3_aaa(fb,2)) = jac(VF3_aaa(fa,2),VF3_aaa(fb,2)) + e3*edgeF3(i,1)/lenF3(i,1);
+            jac(VF3_aaa(fa,2),VF3_aaa(fc,2)) = jac(VF3_aaa(fa,2),VF3_aaa(fc,2)) + e3*edgeF3(i,3)/lenF3(i,3);
         elseif j==2
-            jac(VF3_2nd(fb,2),VF3_2nd(fb,2)) = jac(VF3_2nd(fb,2),VF3_2nd(fb,2)) - e3*edgeF3(i,2)/lenF3(i,2) - e3*edgeF3(i,1)/lenF3(i,1);
-            jac(VF3_2nd(fb,2),VF3_2nd(fc,2)) = jac(VF3_2nd(fb,2),VF3_2nd(fc,2)) + e3*edgeF3(i,2)/lenF3(i,2);
-            jac(VF3_2nd(fb,2),VF3_2nd(fa,2)) = jac(VF3_2nd(fb,2),VF3_2nd(fa,2)) + e3*edgeF3(i,1)/lenF3(i,1);
+            jac(VF3_aaa(fb,2),VF3_aaa(fb,2)) = jac(VF3_aaa(fb,2),VF3_aaa(fb,2)) - e3*edgeF3(i,2)/lenF3(i,2) - e3*edgeF3(i,1)/lenF3(i,1);
+            jac(VF3_aaa(fb,2),VF3_aaa(fc,2)) = jac(VF3_aaa(fb,2),VF3_aaa(fc,2)) + e3*edgeF3(i,2)/lenF3(i,2);
+            jac(VF3_aaa(fb,2),VF3_aaa(fa,2)) = jac(VF3_aaa(fb,2),VF3_aaa(fa,2)) + e3*edgeF3(i,1)/lenF3(i,1);
         elseif j==3
-            jac(VF3_2nd(fc,2),VF3_2nd(fc,2)) = jac(VF3_2nd(fc,2),VF3_2nd(fc,2)) - e3*edgeF3(i,3)/lenF3(i,3) - e3*edgeF3(i,2)/lenF3(i,2);
-            jac(VF3_2nd(fc,2),VF3_2nd(fa,2)) = jac(VF3_2nd(fc,2),VF3_2nd(fa,2)) + e3*edgeF3(i,3)/lenF3(i,3);
-            jac(VF3_2nd(fc,2),VF3_2nd(fb,2)) = jac(VF3_2nd(fc,2),VF3_2nd(fb,2)) + e3*edgeF3(i,2)/lenF3(i,2);
+            jac(VF3_aaa(fc,2),VF3_aaa(fc,2)) = jac(VF3_aaa(fc,2),VF3_aaa(fc,2)) - e3*edgeF3(i,3)/lenF3(i,3) - e3*edgeF3(i,2)/lenF3(i,2);
+            jac(VF3_aaa(fc,2),VF3_aaa(fa,2)) = jac(VF3_aaa(fc,2),VF3_aaa(fa,2)) + e3*edgeF3(i,3)/lenF3(i,3);
+            jac(VF3_aaa(fc,2),VF3_aaa(fb,2)) = jac(VF3_aaa(fc,2),VF3_aaa(fb,2)) + e3*edgeF3(i,2)/lenF3(i,2);
         end
     end
 end
@@ -251,25 +265,25 @@ for i=1:Ncrow
 end
 
 for ii=1:is1row
-    minus1 = find(is1(ii)==VF1_2nd(:,1));
-    plus1 = find(is1(ii)==VF2_2nd(:,1));
-    jac(VF2_2nd(plus1,2),:) = jac(VF2_2nd(plus1,2),:) + jac(VF1_2nd(minus1,2),:);
-    jac(VF1_2nd(minus1,2),:)=0;
-    jac(VF1_2nd(minus1,2),VF1_2nd(minus1,2))=-1;
-    jac(VF1_2nd(minus1,2),VF2_2nd(plus1,2))=1; 
+    minus1 = find(is1(ii)==VF1_aaa(:,1));
+    plus1 = find(is1(ii)==VF2_aaa(:,1));
+    jac(VF2_aaa(plus1,2),:) = jac(VF2_aaa(plus1,2),:) + jac(VF1_aaa(minus1,2),:);
+    jac(VF1_aaa(minus1,2),:)=0;
+    jac(VF1_aaa(minus1,2),VF1_aaa(minus1,2))=-1;
+    jac(VF1_aaa(minus1,2),VF2_aaa(plus1,2))=1; 
 end
 
 for ii=1:is2row
-    minus1 = find(is2(ii)==VF3_2nd(:,1));
-    plus1 = find(is2(ii)==VF2_2nd(:,1));
-    jac(VF2_2nd(plus1,2),:) = jac(VF2_2nd(plus1,2),:) + jac(VF3_2nd(minus1,2),:);
-    jac(VF3_2nd(minus1,2),:)=0;
-    jac(VF3_2nd(minus1,2),VF3_2nd(minus1,2))=-1;
-    jac(VF3_2nd(minus1,2),VF2_2nd(plus1,2))=1; 
+    minus1 = find(is2(ii)==VF3_aaa(:,1));
+    plus1 = find(is2(ii)==VF2_aaa(:,1));
+    jac(VF2_aaa(plus1,2),:) = jac(VF2_aaa(plus1,2),:) + jac(VF3_aaa(minus1,2),:);
+    jac(VF3_aaa(minus1,2),:)=0;
+    jac(VF3_aaa(minus1,2),VF3_aaa(minus1,2))=-1;
+    jac(VF3_aaa(minus1,2),VF2_aaa(plus1,2))=1; 
 end
 
-con1 = 6; % top contact
-con2 = 6; % bottom contact
+con1 = 5; % top contact
+con2 = 5; % bottom contact
 
 res = zeros(VFTrow,1);
 for i=1:Ncrow
@@ -284,15 +298,25 @@ for i=1:Ncrow
 end
 
 phi = jac\res;
+phi_sorted = zeros(VFrow,1);
+for i=1:size(VF1_aaa,1)
+    phi_sorted(VF1_aaa(i,1))=phi(VF1_aaa(i,2));
+end
+for i=1:size(VF2_aaa,1)
+    phi_sorted(VF2_aaa(i,1))=phi(VF2_aaa(i,2));
+end
+for i=1:size(VF3_aaa,1)
+    phi_sorted(VF3_aaa(i,1))=phi(VF3_aaa(i,2));
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 aaa = zeros(VF1row+VF2row+VF3row,1); %%% variable for total regions
 for i=1:size(aaa,1)
     if i<=VF1row
-        aaa(i)=phi(VF1(i));
+        aaa(i)=phi_sorted(VF1(i));
     elseif i>VF1row && i<=VF1row+VF2row
-        aaa(i)=phi(VF2(i-VF1row));
+        aaa(i)=phi_sorted(VF2(i-VF1row));
     else
-        aaa(i)=phi(VF3(i-(VF1row+VF2row)));
+        aaa(i)=phi_sorted(VF3(i-(VF1row+VF2row)));
     end
 end
 
@@ -378,12 +402,12 @@ while 1
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% visualize part
-% figure
-% patch('Faces',F1,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','blue','FaceColor','interp','LineWidth',1, 'Marker','o');
-% patch('Faces',F2,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','green','FaceColor','interp','LineWidth',1, 'Marker','o');
-% patch('Faces',F3,'Vertices',V, 'FaceVertexCData',phi, 'EdgeColor','blue','FaceColor','interp','LineWidth',1, 'Marker','o');
-% title('Φ visualizing structure')
-% patch('Faces',interedge1,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
-% patch('Faces',interedge2,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
-% patch('Faces',interedge3,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
-% colorbar
+figure
+patch('Faces',F1,'Vertices',V, 'FaceVertexCData',phi_sorted, 'EdgeColor','blue','FaceColor','interp','LineWidth',1, 'Marker','o');
+patch('Faces',F2,'Vertices',V, 'FaceVertexCData',phi_sorted, 'EdgeColor','green','FaceColor','interp','LineWidth',1, 'Marker','o');
+patch('Faces',F3,'Vertices',V, 'FaceVertexCData',phi_sorted, 'EdgeColor','blue','FaceColor','interp','LineWidth',1, 'Marker','o');
+title('Φ visualizing structure')
+patch('Faces',interedge1,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
+patch('Faces',interedge2,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
+patch('Faces',interedge3,'Vertices',V, 'EdgeColor','magenta','FaceColor','none','LineWidth', 3, 'Marker','o');
+colorbar
