@@ -1,3 +1,5 @@
+clc
+clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% HW_edit
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5,8 +7,13 @@
 q = 1.602e-19;
 e0 = 8.8542e-12;
 nint = 1e16;
-Ndop = 1e24;
-Vt = 0.0259;
+Ndop = -1e24;
+Kb = 1.38e-23;
+T = 300;
+Vt = Kb*T/q;
+con1 = 0.33374; % number of contact1
+con2 = 0.33374; % number of contact2
+Niter = 10; % number of iteration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 V = importdata("vertex.txt"); Vrow = size(V,1);
 E = importdata("element.txt"); Erow = size(E,1);
@@ -16,8 +23,8 @@ E3 = importdata("element_region3.txt"); E3row = size(E3,1);
 
 contact = importdata("contact.txt"); [conrow, concol] = size(contact);
 unicon = unique(contact);
-con1 = 5; % number of top contact edge
-con2 = 5; % number bottom contact edge
+Ncon1 = 5; % number of top contact edge
+Ncon2 = 5; % number bottom contact edge
 
 VE = unique(E); VErow= size(VE,1);
 VE1 = unique(E1); VE1row = size(VE1, 1);
@@ -232,19 +239,19 @@ for i=1:E2row
         - e2*(edgeE2(i,1)/lenE2(i,1) + edgeE2(i,3)/lenE2(i,3));
     jac1(X1_sorted(E2(i,1),2),X1_sorted(E2(i,2),2)) = jac1(X1_sorted(E2(i,1),2),X1_sorted(E2(i,2),2)) + e2*edgeE2(i,1)/lenE2(i,1);
     jac1(X1_sorted(E2(i,1),2),X1_sorted(E2(i,3),2)) = jac1(X1_sorted(E2(i,1),2),X1_sorted(E2(i,3),2)) + e2*edgeE2(i,3)/lenE2(i,3);
-    res1(X1_sorted(E2(i,1),2),1) = res1(X1_sorted(E2(i,1),2),1) + (edgeE2(i,1)*lenE2(i,1) + edgeE2(i,3)*lenE2(i,3))/4*q/e0*Ndop;
+    res1(X1_sorted(E2(i,1),2),1) = res1(X1_sorted(E2(i,1),2),1) + (edgeE2(i,1)*lenE2(i,1) + edgeE2(i,3)*lenE2(i,3))/4*q/e0*(-Ndop);
 
     jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,2),2)) = jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,2),2))...
         - e2*(edgeE2(i,1)/lenE2(i,1) + edgeE2(i,2)/lenE2(i,2));
     jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,1),2)) = jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,1),2)) + e2*edgeE2(i,1)/lenE2(i,1);
     jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,3),2)) = jac1(X1_sorted(E2(i,2),2),X1_sorted(E2(i,3),2)) + e2*edgeE2(i,2)/lenE2(i,2);
-    res1(X1_sorted(E2(i,2),2),1) = res1(X1_sorted(E2(i,2),2),1) + (edgeE2(i,1)*lenE2(i,1) + edgeE2(i,2)*lenE2(i,2))/4*q/e0*Ndop;
+    res1(X1_sorted(E2(i,2),2),1) = res1(X1_sorted(E2(i,2),2),1) + (edgeE2(i,1)*lenE2(i,1) + edgeE2(i,2)*lenE2(i,2))/4*q/e0*(-Ndop);
 
     jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,3),2)) = jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,3),2))...
         - e2*(edgeE2(i,2)/lenE2(i,2) + edgeE2(i,3)/lenE2(i,3));
     jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,2),2)) = jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,2),2)) + e2*edgeE2(i,2)/lenE2(i,2);
     jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,1),2)) = jac1(X1_sorted(E2(i,3),2),X1_sorted(E2(i,1),2)) + e2*edgeE2(i,3)/lenE2(i,3);
-    res1(X1_sorted(E2(i,3),2),1) = res1(X1_sorted(E2(i,3),2),1) + (edgeE2(i,2)*lenE2(i,2) + edgeE2(i,3)*lenE2(i,3))/4*q/e0*Ndop;
+    res1(X1_sorted(E2(i,3),2),1) = res1(X1_sorted(E2(i,3),2),1) + (edgeE2(i,2)*lenE2(i,2) + edgeE2(i,3)*lenE2(i,3))/4*q/e0*(-Ndop);
 end
 
 for i=1:E3row
@@ -293,10 +300,10 @@ end
 for i=1:conrow
     for j=1:concol
         fcon=find(contact(i,j)==X1(:,1));
-        if i<=con1
-            res1(X1(fcon,2)) = 0.33374;
-        elseif i>con1 &&  i<=con1+con2
-            res1(X1(fcon,2)) = 0.33374;
+        if i<=Ncon1
+            res1(X1(fcon,2)) = con1;
+        elseif i>Ncon1 &&  i<=Ncon1+Ncon2
+            res1(X1(fcon,2)) = con2;
         end
     end
 end
@@ -318,12 +325,12 @@ end
 
 %%% jacobian, residue matrix
 X2_sorted = find(X2);
-
-for it=1:10
+for it=1:Niter
     jac2 = zeros(size(X2_sorted,1),size(X2_sorted,1));
     jac2row = size(size(X2_sorted,1),1);
     res2 = zeros(size(X2_sorted,1),1);
-
+    save_phi_update = zeros(Niter,1);
+    
     for i=1:E1row
         jac2(X2(3*(X1_sorted(E1(i,1),1))-2,1),X2(3*(X1_sorted(E1(i,1),1))-2,1)) = jac2(X2(3*(X1_sorted(E1(i,1),1))-2,1),X2(3*(X1_sorted(E1(i,1),1))-2,1))...
             - e1*(edgeE1(i,1)/lenE1(i,1) + edgeE1(i,3)/lenE1(i,3));
@@ -437,24 +444,24 @@ for it=1:10
             + e1*edgeE3(i,3)/lenE3(i,3)*phi(X1_sorted(E3(i,1),3));
     end
 
-    %%%  for elelctron
+    %%%  for electron
     for i=1:VE2row
         %%% n-nit*exp(phi/Vt)
         jac2(X2(3*X1_sorted(VE2(i),2)-1),X2(3*X1_sorted(VE2(i),2)-1)) = 1;
         jac2(X2(3*X1_sorted(VE2(i),2)-1),X2(3*X1_sorted(VE2(i),2)-2)) = - nint/Vt*exp(phi(X1_sorted(VE2(i),2))/Vt);
         res2(X2(3*X1_sorted(VE2(i),2)-1),1) = n(i) - nint*exp(phi(X1_sorted(VE2(i),2))/Vt);
-        %%% - qn 부분
+        %%% - qn 
         jac2(X2(3*X1_sorted(VE2(i),2)-2),X2(3*X1_sorted(VE2(i),2)-1)) = - saveexl(X1_sorted(VE2(i),2))*q/e0;
         res2(X2(3*X1_sorted(VE2(i),2)-2),1) = res2(X2(3*X1_sorted(VE2(i),2)-2),1) - saveexl(X1_sorted(VE2(i),2))*q/e0*n(i);
     end
 
     %%%  for hole
     for i=1:VE2row
-        %% p-nit*exp(-phi/Vt)
+        %%% p-nit*exp(-phi/Vt)
         jac2(X2(3*X1_sorted(VE2(i),2)),X2(3*X1_sorted(VE2(i),2))) = 1;
         jac2(X2(3*X1_sorted(VE2(i),2)),X2(3*X1_sorted(VE2(i),2)-2)) = nint/Vt*exp(-phi(X1_sorted(VE2(i),2))/Vt);
         res2(X2(3*X1_sorted(VE2(i),2)),1) = p(i) - nint*exp(-phi(X1_sorted(VE2(i),2))/Vt);
-        %% + qp 부분
+        %%% + qp 
         jac2(X2(3*X1_sorted(VE2(i),2)-2),X2(3*X1_sorted(VE2(i),2))) = saveexl(X1_sorted(VE2(i),2))*q/e0;
         res2(X2(3*X1_sorted(VE2(i),2)-2),1) = res2(X2(3*X1_sorted(VE2(i),2)-2),1) + saveexl(X1_sorted(VE2(i),2))*q/e0*p(i);
     end
@@ -464,10 +471,10 @@ for it=1:10
             fcon=find(contact(i,j)==X1(:,1));
             jac2(X2(3*X1(fcon,2)-2),:) = 0;
             jac2(X2(3*X1(fcon,2)-2),X2(3*X1(fcon,2)-2)) = 1;
-            if i<=con1
-                res2(X2(3*X1(fcon,2)-2),1) = phi(X1(fcon,2),1) - 0.33374;
-            elseif i>con1 &&  i<=con1+con2
-                res2(X2(3*X1(fcon,2)-2),1) = phi(X1(fcon,2),1) - 0.33374;
+            if i<=Ncon1
+                res2(X2(3*X1(fcon,2)-2),1) = phi(X1(fcon,2),1) - con1;
+            elseif i>Ncon1 &&  i<=Ncon1+Ncon2
+                res2(X2(3*X1(fcon,2)-2),1) = phi(X1(fcon,2),1) - con2;
             end
         end
     end
@@ -506,7 +513,6 @@ for it=1:10
         end
     end
 
-    % update = jac2 \ (-res2);
     Cmatrix = spdiags(Cvector,0,size(X2_sorted,1),size(X2_sorted,1));
     jac2_scaled = jac2 * Cmatrix;
     Rvector = 1./sum(abs(jac2_scaled),2);
@@ -537,9 +543,15 @@ for it=1:10
         end
     end
 
-savephi(it,1) = maxupdate;
+    save_phi_update(it,1) = maxupdate;
 
 end
+
+figure
+semilogy(save_phi_update)
+xlabel('iteration number')
+ylabel('potential update [V]')
+title('max potential update')
 
 %%% variable
 % pot = zeros(sum(Nvertex(:,1)),1); %%% potential total regions
