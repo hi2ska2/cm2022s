@@ -8,13 +8,16 @@ final_Vdrain = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 final_Vgate = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-T = 1.5e-6;
-deltaT = 0.05e-6;
-rftime = 0.5e-6;
+T = 5e-9;
+deltaT = 0.1e-10;
+zerotime = 1e-9;
+rftime = 1e-9;
+pulsetime = 1e-9;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-steadytime = T-2*(rftime);
-rtimepoint = rftime / deltaT + 1;
-ftimepoint = (T - rftime)/deltaT + 1;
+zero_end = round(zerotime/deltaT);
+r_end = round((zerotime + rftime)/deltaT);
+pulse_end = round((zerotime + rftime + pulsetime)/deltaT);
+f_end = round((T - zerotime)/deltaT);
 Vgstepsize = final_Vgate/(rftime/deltaT);
 Nstep = round(T/deltaT);
 time = 0:deltaT:T;
@@ -36,12 +39,16 @@ for step=1:Nstep+1
     old_n = n(:,1);
     old_p = p(:,1);
 
-    if step <= rtimepoint
-        Vg = Vgstepsize*(step-1);
-    elseif step > rtimepoint && step <= ftimepoint
+    if step <= zero_end + 1
+        Vg = 0;
+    elseif step > zero_end + 1 && step <= r_end + 1
+        Vg = Vg + Vgstepsize;
+    elseif step > r_end + 1 && step <= pulse_end + 1
         Vg = final_Vgate;
-    elseif step > ftimepoint && step <= Nstep+1
+    elseif step > pulse_end + 1 && step <= f_end + 1
         Vg = Vg - Vgstepsize;
+    elseif step > f_end + 1 && step <= Nstep + 1
+        Vg = 0;
     end
 
     for it=1:Niter2
@@ -649,12 +656,12 @@ figure(1)
 plot(time, save_Vg, 'r', 'LineWidth',2)
 xlabel('time[sec]')
 ylabel('Gate voltage[V]')
-xlim([0 3e-6])
+xlim([0 T])
 ylim([0 1.2])
 
 figure(2)
 plot(time, I,'b', 'LineWidth',2)
 xlabel('time[sec]')
 ylabel('Current[A]')
-xlim([0 3e-6])
-ylim([0 0.5])
+xlim([0 T])
+ylim([0 0.3])
