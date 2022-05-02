@@ -39,6 +39,7 @@ Ncon1 = 9;
 Ncon2 = 9;
 Ncon3 = 11;
 Ncon4 = 11;
+
 % drain contact analysis
 cond = zeros(2*Ncon3,1);
 ccc=1;
