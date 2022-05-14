@@ -1,7 +1,7 @@
 clc
 clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% homogeneous %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% homogeneous SS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 width = 1e-6;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -17,9 +17,6 @@ mup = 250e-4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Doping density
 Nd = 2e23;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Iteration number
-Niter1 = 20;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 V = importdata("vertex.txt"); Vrow = size(V,1);
 E = importdata("element.txt"); Erow = size(E,1);
@@ -191,10 +188,10 @@ end
 %%% jacobian, residue matrix (non-linear Possion equation)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-save_phi_upd = zeros(Niter1,1);
+save_phi_upd = zeros(20,1);
 save_upd = zeros(size(X2_sorted,1),1);
 
-for it=1:Niter1
+for it=1:20
 
     jac = sparse(size(X2_sorted,1),size(X2_sorted,1));
     res = zeros(size(X2_sorted,1),1);
@@ -326,24 +323,26 @@ for it=1:Niter1
 
     %%%  for electron
     for i=1:V_silicon_row
-        %%% n-nit*exp(phi/Vt)
-        jac(X2(3*V_silicon(i,2)-1),X2(3*V_silicon(i,2)-1)) = 1;
-        jac(X2(3*V_silicon(i,2)-1),X2(3*V_silicon(i,2)-2)) = - nint/Vt*exp(phi(V_silicon(i,2))/Vt);
+        % n-nit*exp(phi/Vt)
+        jac(X2(3*V_silicon(i,2)-1), X2(3*V_silicon(i,2)-1)) = 1;
+        jac(X2(3*V_silicon(i,2)-1), X2(3*V_silicon(i,2)-2)) = - nint/Vt*exp(phi(V_silicon(i,2))/Vt);
         res(X2(3*V_silicon(i,2)-1),1) = n(i) - nint*exp(phi(V_silicon(i,2))/Vt);
-        %%% - qn
-        jac(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2)-1)) = - saveexl(V_silicon(i,2))*q/e0;
-        res(X2(3*V_silicon(i,2)-2),1) = res(X2(3*V_silicon(i,2)-2),1) - saveexl(V_silicon(i,2))*q/e0*n(i);
+
+        % - qn
+        jac(X2(3*V_silicon(i,2)-2), X2(3*V_silicon(i,2)-1)) = - saveexl(V_silicon(i,2))*q/e0;
+        res(X2(3*V_silicon(i,2)-2), 1) = res(X2(3*V_silicon(i,2)-2),1) - saveexl(V_silicon(i,2))*q/e0*n(i);
     end
 
     %%%  for hole
     for i=1:V_silicon_row
-        %%% p-nit*exp(-phi/Vt)
-        jac(X2(3*V_silicon(i,2)),X2(3*V_silicon(i,2))) = 1;
-        jac(X2(3*V_silicon(i,2)),X2(3*V_silicon(i,2)-2)) = nint/Vt*exp(-phi(V_silicon(i,2))/Vt);
+        % p-nit*exp(-phi/Vt)
+        jac(X2(3*V_silicon(i,2)), X2(3*V_silicon(i,2))) = 1;
+        jac(X2(3*V_silicon(i,2)), X2(3*V_silicon(i,2)-2)) = nint/Vt*exp(-phi(V_silicon(i,2))/Vt);
         res(X2(3*V_silicon(i,2)),1) = p(i) - nint*exp(-phi(V_silicon(i,2))/Vt);
-        %%% + qp
-        jac(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2))) = saveexl(V_silicon(i,2))*q/e0;
-        res(X2(3*V_silicon(i,2)-2),1) = res(X2(3*V_silicon(i,2)-2),1) + saveexl(V_silicon(i,2))*q/e0*p(i);
+
+        % + qp
+        jac(X2(3*V_silicon(i,2)-2), X2(3*V_silicon(i,2))) = saveexl(V_silicon(i,2))*q/e0;
+        res(X2(3*V_silicon(i,2)-2), 1) = res(X2(3*V_silicon(i,2)-2),1) + saveexl(V_silicon(i,2))*q/e0*p(i);
     end
 
 
@@ -369,7 +368,8 @@ for it=1:Niter1
                 res(X2(3*fcon-2),1) = phi(fcon) - Vt*log(Nd/nint);
                 res(X2(3*fcon-1),1) = n(fcon_np) - Nd;
                 res(X2(3*fcon),1) = p(fcon_np) - nint*nint/Nd;
-                % Anode
+
+            % Anode
             elseif i>(Ncon1) &&  i<=(Ncon1+Ncon2)
                 res(X2(3*fcon-2),1) = phi(fcon) - Vt*log(Nd/nint);
                 res(X2(3*fcon-1),1) = n(fcon_np) - Nd;
@@ -423,6 +423,7 @@ for it=1:Niter1
 
     save_upd(:,it) = upd(:,1);
     save_phi_upd(it,1) = maxupdate1;
+
 end
 
 initial_phi_1iter = phi(:,1);
@@ -434,18 +435,15 @@ initial_phi_1iter = phi(:,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Final iteration number
-Niter2 = 50;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-save_phi_update = zeros(Niter2,1);
+save_phi_update = zeros(20,1);
 save_update = zeros(size(X2_sorted,1),1);
 
 for step=1:51
 
-    Vex = (step-1)*0.01;
+    Vanode = (step-1)*0.01;
 
-    for it=1:Niter2
+    for it=1:20
 
         Jaco = sparse(size(X2_sorted,1),size(X2_sorted,1));
         Res = zeros(size(X2_sorted,1),1);
@@ -579,6 +577,7 @@ for step=1:51
             %%% - qn
             Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2)-1)) = Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2)-1)) - saveexl(V_silicon(i,2))*q/e0;
             Res(X2(3*V_silicon(i,2)-2),1) = Res(X2(3*V_silicon(i,2)-2),1) - saveexl(V_silicon(i,2))*q/e0*n(i);
+
             %%% + qp
             Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2))) =  Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2))) + saveexl(V_silicon(i,2))*q/e0;
             Res(X2(3*V_silicon(i,2)-2),1) = Res(X2(3*V_silicon(i,2)-2),1) + saveexl(V_silicon(i,2))*q/e0*p(i);
@@ -798,9 +797,10 @@ for step=1:51
                     Res(X2(3*fcon-2),1) = phi(fcon) - Vt*log(Nd/nint);
                     Res(X2(3*fcon-1),1) = n(fcon_np) - Nd;
                     Res(X2(3*fcon),1) = p(fcon_np) - nint*nint/Nd;
-                    % Anode
+
+                % Anode
                 elseif i>(Ncon1) &&  i<=(Ncon1+Ncon2)
-                    Res(X2(3*fcon-2),1) = phi(fcon) - Vt*log(Nd/nint)-Vex;
+                    Res(X2(3*fcon-2),1) = phi(fcon) - Vt*log(Nd/nint) - Vanode;
                     Res(X2(3*fcon-1),1) = n(fcon_np) - Nd;
                     Res(X2(3*fcon),1) = p(fcon_np) - nint*nint/Nd;
                 end
@@ -855,8 +855,10 @@ for step=1:51
         if maxupdate < 1e-10
             break
         end
+
     end
 end
+
 n_DC = n(:,1);
 p_DC = p(:,1);
 phi_DC = phi(:,1);
