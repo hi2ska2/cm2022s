@@ -1,12 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% homogenoeous transient %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Final iteration number
-Niter2 = 50;
+%%% homogenoeous SS transient %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % transient edit part
-freq = 1e12;
-cycle = 3;
+freq = 10e12;
+cycle = 2;
 T = 1/freq;
 Vamp = 1e-3;
 Nstep = 100;
@@ -15,19 +12,20 @@ totalNstep = Nstep*cycle;
 totalT = T*cycle;
 deltaT = T/Nstep;
 time = 0:deltaT:totalT;
-ncoeff = q*mun*Vt;
-pcoeff = q*mup*Vt;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-save_phi_update = zeros(Niter2,1);
+ncoeff = q*mun;
+pcoeff = q*mup;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dphi = zeros(size(phi));
+dn = nint*exp(dphi);
+dp = nint*exp(dphi);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+save_phi_update = zeros(20,1);
 save_update = zeros(size(X2_sorted,1),1);
 
 In = zeros(totalNstep+1,1);
 Ip = zeros(totalNstep+1,1);
 Id = zeros(totalNstep+1,1);
-
-dphi = zeros(size(phi));
-dn = nint*exp(dphi(:,1));
-dp = nint*exp(dphi(:,1));
 
 for step=1:totalNstep+1
 
@@ -35,9 +33,9 @@ for step=1:totalNstep+1
     old_dn = dn(:,1);
     old_dp = dp(:,1);
 
-    for it=1:Niter2
+    for it=1:20
 
-        Jaco = sparse(size(X2_sorted,1),size(X2_sorted,1));
+        Jaco = zeros(size(X2_sorted,1),size(X2_sorted,1));
         Res = zeros(size(X2_sorted,1),1);
 
         saveexl = zeros(size(X1,1),1);
@@ -51,10 +49,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
                 saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
@@ -64,10 +60,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,2)/lenEsi(i,2);
                 Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2))*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
                 saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
@@ -77,10 +71,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
-                    + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,3),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,1),2));
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
                 saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
 
             elseif i > E2row && i <= (E2row + E3row)
@@ -91,10 +83,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
                 saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
@@ -104,10 +94,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,2)/lenEsi(i,2);
                 Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2))*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
                 saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
@@ -117,10 +105,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
-                    + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,3),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,1),2));
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
                 saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
 
             elseif i > (E2row+E3row) && i <= Esirow
@@ -131,10 +117,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
                 saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
@@ -144,10 +128,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
                     + esi*edgeEsi(i,2)/lenEsi(i,2);
                 Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
-                    + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2))*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,1)/lenEsi(i,1)*dphi(X1_sorted(Esi(i,1),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,3),2));
+                    + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
                 saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
 
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
@@ -157,10 +139,8 @@ for step=1:totalNstep+1
                 Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1)) = Jaco(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1))...
                     + esi*edgeEsi(i,3)/lenEsi(i,3);
                 Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
-                    + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4*q/e0*Nd...
-                    - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3))*dphi(X1_sorted(Esi(i,3),2))...
-                    + esi*edgeEsi(i,2)/lenEsi(i,2)*dphi(X1_sorted(Esi(i,2),2))...
-                    + esi*edgeEsi(i,3)/lenEsi(i,3)*dphi(X1_sorted(Esi(i,1),2));
+                    + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
+                    + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
                 saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
             end
         end
@@ -169,11 +149,11 @@ for step=1:totalNstep+1
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%  for electron
         for i=1:V_silicon_row
-            %%% - qn
+            % - qn
             Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2)-1)) = Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2)-1)) - saveexl(V_silicon(i,2))*q/e0;
             Res(X2(3*V_silicon(i,2)-2),1) = Res(X2(3*V_silicon(i,2)-2),1) - saveexl(V_silicon(i,2))*q/e0*dn(i);
 
-            %%% + qp
+            % + qp
             Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2))) =  Jaco(X2(3*V_silicon(i,2)-2),X2(3*V_silicon(i,2))) + saveexl(V_silicon(i,2))*q/e0;
             Res(X2(3*V_silicon(i,2)-2),1) = Res(X2(3*V_silicon(i,2)-2),1) + saveexl(V_silicon(i,2))*q/e0*dp(i);
         end
@@ -185,130 +165,139 @@ for step=1:totalNstep+1
             f2 = find(V_silicon(:,1)==Esi(i,2));
             f3 = find(V_silicon(:,1)==Esi(i,3));
 
-            for j=1:3
+            for j = 1:3
 
                 if j == 1 %%% 1st element
 
-                    n_DC_av1 = (n_DC(f1)+n_DC(f2))/2;
-                    n_DC_av2 = (n_DC(f1)+n_DC(f3))/2;
-                    dn_av1 = (dn(f1)+dn(f2))/2;
-                    dn_av2 = (dn(f1)+dn(f3))/2;
+                    n_DC_av1 = 0.5*(n_DC(f2)+n_DC(f1));
+                    n_DC_av2 = 0.5*(n_DC(f3)+n_DC(f1));
+                    dn_av1 = 0.5*(dn(f2)+dn(f1));
+                    dn_av2 = 0.5*(dn(f3)+dn(f1));
+
                     ddphi1 = dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,2),2))-phi_DC(X1_sorted(Esi(i,1),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,3),2))-phi_DC(X1_sorted(Esi(i,1),2));
+
                     ddn1 = dn(f2)-dn(f1);
                     ddn2 = dn(f3)-dn(f1);
 
                     Res(X2(3*X1_sorted(Esi(i,1),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,1),2)-1,1),1)...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2);
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)...
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt);
 
                     % n part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1/Vt + 1)...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2/Vt + 1);
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1 + Vt)...
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2 + Vt);
+
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1/Vt - 1);
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2/Vt - 1);
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2 - Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(-n_DC_av1)/Vt...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(-n_DC_av2)/Vt;
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(-n_DC_av1)...
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(-n_DC_av2);
+                    
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*n_DC_av1/Vt;
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*n_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*n_DC_av2/Vt;
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*n_DC_av2;
 
                     % n transient part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1))...
-                        - q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))/deltaT;
+                        - q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))/deltaT;
+
                     Res(X2(3*X1_sorted(Esi(i,1),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,1),2)-1,1),1)...
-                        - q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(dn(f1) - old_dn(f1))/deltaT;
+                        - q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(dn(f1) - old_dn(f1))/deltaT;
 
                 elseif j == 2 %%% 2nd element
 
-                    n_DC_av1 = (n_DC(f2)+n_DC(f3))/2;
-                    n_DC_av2 = (n_DC(f2)+n_DC(f1))/2;
-                    dn_av1 = (dn(f2)+dn(f3))/2;
-                    dn_av2 = (dn(f2)+dn(f1))/2;
+                    n_DC_av1 = 0.5*(n_DC(f3)+n_DC(f2));
+                    n_DC_av2 = 0.5*(n_DC(f1)+n_DC(f2));
+                    dn_av1 = 0.5*(dn(f3)+dn(f2));
+                    dn_av2 = 0.5*(dn(f1)+dn(f2));
+
                     ddphi1 = dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,3),2))-phi_DC(X1_sorted(Esi(i,2),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,1),2))-phi_DC(X1_sorted(Esi(i,2),2));
+
                     ddn1 = dn(f3)-dn(f2);
                     ddn2 = dn(f1)-dn(f2);
 
                     Res(X2(3*X1_sorted(Esi(i,2),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,2),2)-1,1),1)...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2);
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)...
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt);
 
                     % n part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1/Vt + 1)...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2/Vt + 1);
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1 + Vt)...
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2 + Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1/Vt - 1);
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2/Vt - 1);
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2 - Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(-n_DC_av1)/Vt...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(-n_DC_av2)/Vt;
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(-n_DC_av1)...
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*(-n_DC_av2);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*n_DC_av1/Vt;
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*n_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*n_DC_av2/Vt;
+                        - ncoeff*edgeEsi(i,1)/lenEsi(i,1)*n_DC_av2;
 
                     % n transient part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1))...
-                        - q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,2)*edge(i,2))/deltaT;
+                        - q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))/deltaT;
                     Res(X2(3*X1_sorted(Esi(i,2),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,2),2)-1,1),1)...
-                        - q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,2)*edge(i,2))*(dn(f2) - old_dn(f2))/deltaT;
+                        - q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(dn(f2) - old_dn(f2))/deltaT;
 
                 elseif j == 3  %%% 3rd element
 
-                    n_DC_av1 = (n_DC(f3)+n_DC(f1))/2;
-                    n_DC_av2 = (n_DC(f3)+n_DC(f2))/2;
-                    dn_av1 = (dn(f3)+dn(f1))/2;
-                    dn_av2 = (dn(f3)+dn(f2))/2;
+                    n_DC_av1 = 0.5*(n_DC(f1)+n_DC(f3));
+                    n_DC_av2 = 0.5*(n_DC(f2)+n_DC(f3));
+                    dn_av1 = 0.5*(dn(f1)+dn(f3));
+                    dn_av2 = 0.5*(dn(f2)+dn(f3));
+
                     ddphi1 = dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,1),2))-phi_DC(X1_sorted(Esi(i,3),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,2),2))-phi_DC(X1_sorted(Esi(i,3),2));
+
                     ddn1 = dn(f1)-dn(f3);
                     ddn2 = dn(f2)-dn(f3);
 
                     Res(X2(3*X1_sorted(Esi(i,3),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,3),2)-1,1),1)...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2);
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)...
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt);
 
                     % n part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1/Vt + 1)...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2/Vt + 1);
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1 + Vt)...
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2 + Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1/Vt - 1);
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2/Vt - 1);
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2 - Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(-n_DC_av1)/Vt...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(-n_DC_av2)/Vt;
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*(-n_DC_av1)...
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*(-n_DC_av2);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*n_DC_av1/Vt;
+                        - ncoeff*edgeEsi(i,3)/lenEsi(i,3)*n_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*n_DC_av2/Vt;
+                        - ncoeff*edgeEsi(i,2)/lenEsi(i,2)*n_DC_av2;
 
                     % n transient part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1))...
-                        - q*0.25*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))/deltaT;
+                        - q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))/deltaT;
                     Res(X2(3*X1_sorted(Esi(i,3),2)-1,1),1) = Res(X2(3*X1_sorted(Esi(i,3),2)-1,1),1)...
-                        - q*0.25*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(dn(f3) - old_dn(f3))/deltaT;
+                        - q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(dn(f3) - old_dn(f3))/deltaT;
                 end
             end
         end
@@ -321,133 +310,139 @@ for step=1:totalNstep+1
             f2 = find(V_silicon(:,1)==Esi(i,2));
             f3 = find(V_silicon(:,1)==Esi(i,3));
 
-            for j =1:3
+            for j = 1:3
 
                 if j == 1 %%% 1st element
 
-                    p_DC_av1 = (p_DC(f1)+p_DC(f2))/2;
-                    p_DC_av2 = (p_DC(f1)+p_DC(f3))/2;
-                    dp_av1 = (dp(f1)+dp(f2))/2;
-                    dp_av2 = (dp(f1)+dp(f3))/2;
+                    p_DC_av1 = 0.5*(p_DC(f2)+p_DC(f1));
+                    p_DC_av2 = 0.5*(p_DC(f3)+p_DC(f1));
+                    dp_av1 = 0.5*(dp(f2)+dp(f1));
+                    dp_av2 = 0.5*(dp(f3)+dp(f1));
 
                     ddphi1 = dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,2),2))-phi_DC(X1_sorted(Esi(i,1),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,3),2))-phi_DC(X1_sorted(Esi(i,1),2));
+
                     ddp1 = dp(f2)-dp(f1);
                     ddp2 = dp(f3)-dp(f1);
 
                     Res(X2(3*X1_sorted(Esi(i,1),2),1),1) = Res(X2(3*X1_sorted(Esi(i,1),2),1),1)...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2);
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)...
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt);
 
                     % p part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1/Vt - 1)...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2/Vt - 1);
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1 - Vt)...
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,2),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,2),2),1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1/Vt + 1);
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC1 + Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,3),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,3),2),1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2/Vt + 1);
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC2 + Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(-p_DC_av1)/Vt...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(-p_DC_av2)/Vt;
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(-p_DC_av1)...
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(-p_DC_av2);
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*p_DC_av1/Vt;
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*p_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*p_DC_av2/Vt;
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*p_DC_av2;
 
                     % p transient part
                     Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1))...
-                        + q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))/deltaT;
+                        + q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))/deltaT;
+
                     Res(X2(3*X1_sorted(Esi(i,1),2),1),1) = Res(X2(3*X1_sorted(Esi(i,1),2),1),1)...
-                        + q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(dp(f1) - old_dp(f1))/deltaT;
+                        + q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(dp(f1) - old_dp(f1))/deltaT;
 
                 elseif j == 2 %%% 2nd element
 
-                    p_DC_av1 = (p_DC(f2)+p_DC(f3))/2;
-                    p_DC_av2 = (p_DC(f2)+p_DC(f1))/2;
-                    dp_av1 = (dp(f2)+dp(f3))/2;
-                    dp_av2 = (dp(f2)+dp(f1))/2;
+                    p_DC_av1 = 0.5*(p_DC(f3)+p_DC(f2));
+                    p_DC_av2 = 0.5*(p_DC(f1)+p_DC(f2));
+                    dp_av1 = 0.5*(dp(f3)+dp(f2));
+                    dp_av2 = 0.5*(dp(f1)+dp(f2));
 
                     ddphi1 = dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,3),2))-phi_DC(X1_sorted(Esi(i,2),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,1),2))-phi_DC(X1_sorted(Esi(i,2),2));
+                    
                     ddp1 = dp(f3)-dp(f2);
                     ddp2 = dp(f1)-dp(f2);
 
                     Res(X2(3*X1_sorted(Esi(i,2),2),1),1) = Res(X2(3*X1_sorted(Esi(i,2),2),1),1)...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2);
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)...
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt);
 
                     % p part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1/Vt - 1)...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2/Vt - 1);
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1 - Vt)...
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,3),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,3),2),1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1/Vt + 1);
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC1 + Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,1),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,1),2),1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2/Vt + 1);
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(0.5*dphi_DC2 + Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(-p_DC_av1)/Vt...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(-p_DC_av2)/Vt;
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(-p_DC_av1)...
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*(-p_DC_av2);
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*p_DC_av1/Vt;
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*p_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*p_DC_av2/Vt;
+                        - pcoeff*edgeEsi(i,1)/lenEsi(i,1)*p_DC_av2;
 
                     % p transient part
                     Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1))...
-                        + q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,2)*edge(i,2))/deltaT;
+                        + q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))/deltaT;
+
                     Res(X2(3*X1_sorted(Esi(i,2),2),1),1) = Res(X2(3*X1_sorted(Esi(i,2),2),1),1)...
-                        + q*0.25*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,2)*edge(i,2))*(dp(f2) - old_dp(f2))/deltaT;
+                        + q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(dp(f2) - old_dp(f2))/deltaT;
 
-                elseif j ==3 %%% 3rd element
+                elseif j == 3 %%% 3rd element
 
-                    p_DC_av1 = (p_DC(f3)+p_DC(f1))/2;
-                    p_DC_av2 = (p_DC(f3)+p_DC(f2))/2;
-                    dp_av1 = (dp(f3)+dp(f1))/2;
-                    dp_av2 = (dp(f3)+dp(f2))/2;
+                    p_DC_av1 = (p_DC(f1)+p_DC(f3))/2;
+                    p_DC_av2 = (p_DC(f2)+p_DC(f3))/2;
+                    dp_av1 = (dp(f1)+dp(f3))/2;
+                    dp_av2 = (dp(f2)+dp(f3))/2;
 
                     ddphi1 = dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2));
                     ddphi2 = dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2));
                     dphi_DC1 = phi_DC(X1_sorted(Esi(i,1),2))-phi_DC(X1_sorted(Esi(i,3),2));
                     dphi_DC2 = phi_DC(X1_sorted(Esi(i,2),2))-phi_DC(X1_sorted(Esi(i,3),2));
+
                     ddp1 = dp(f1)-dp(f3);
                     ddp2 = dp(f2)-dp(f3);
 
                     Res(X2(3*X1_sorted(Esi(i,3),2),1),1) = Res(X2(3*X1_sorted(Esi(i,3),2),1),1)...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2);
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)...
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt);
 
                     % p part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1/Vt - 1)...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2/Vt - 1);
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1 - Vt)...
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2 - Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,1),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,1),2),1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1/Vt + 1);
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(0.5*dphi_DC1 + Vt);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,2),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,2),2),1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2/Vt + 1);
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(0.5*dphi_DC2 + Vt);
 
                     % phi part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2)-2,1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(-p_DC_av1)/Vt...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(-p_DC_av2)/Vt;
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*(-p_DC_av1)...
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*(-p_DC_av2);
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,1),2)-2,1))...
-                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*p_DC_av1/Vt;
+                        - pcoeff*edgeEsi(i,3)/lenEsi(i,3)*p_DC_av1;
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,2),2)-2,1))...
-                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*p_DC_av2/Vt;
+                        - pcoeff*edgeEsi(i,2)/lenEsi(i,2)*p_DC_av2;
 
                     % p transient part
                     Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1)) = Jaco(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1))...
-                        + q*0.25*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))/deltaT;
+                        + q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))/deltaT;
+
                     Res(X2(3*X1_sorted(Esi(i,3),2),1),1) = Res(X2(3*X1_sorted(Esi(i,3),2),1),1)...
-                        + q*0.25*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(dp(f3) - old_dp(f3))/deltaT;
+                        + q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(dp(f3) - old_dp(f3))/deltaT;
                 end
             end
         end
@@ -536,23 +531,24 @@ for step=1:totalNstep+1
 
     for i = 1:size(uniconin,1)
         for j = 1:E4row
+
             fcon = find(uniconin(i) == E4(j,:));
             f1 = find(V_silicon(:,1) == E4(j,1));
             f2 = find(V_silicon(:,1) == E4(j,2));
             f3 = find(V_silicon(:,1) == E4(j,3));
 
             if fcon == 1
-                n_DC_av1 = (n_DC(f1)+n_DC(f2))/2;
-                n_DC_av2 = (n_DC(f1)+n_DC(f3))/2;
-                dn_av1 = (dn(f1)+dn(f2))/2;
-                dn_av2 = (dn(f1)+dn(f3))/2;
+                n_DC_av1 = 0.5*(n_DC(f1)+n_DC(f2));
+                n_DC_av2 = 0.5*(n_DC(f1)+n_DC(f3));
+                dn_av1 = 0.5*(dn(f1)+dn(f2));
+                dn_av2 = 0.5*(dn(f1)+dn(f3));
                 ddn1 = dn(f2)-dn(f1);
                 ddn2 = dn(f3)-dn(f1);
 
-                p_DC_av1 = (p_DC(f1)+p_DC(f2))/2;
-                p_DC_av2 = (p_DC(f1)+p_DC(f3))/2;
-                dp_av1 = (dp(f1)+dp(f2))/2;
-                dp_av2 = (dp(f1)+dp(f3))/2;
+                p_DC_av1 = 0.5*(p_DC(f1)+p_DC(f2));
+                p_DC_av2 = 0.5*(p_DC(f1)+p_DC(f3));
+                dp_av1 = 0.5*(dp(f1)+dp(f2));
+                dp_av2 = 0.5*(dp(f1)+dp(f3));
                 ddp1 = dp(f2)-dp(f1);
                 ddp2 = dp(f3)-dp(f1);
 
@@ -562,27 +558,27 @@ for step=1:totalNstep+1
                 dphi_DC2 = phi_DC(X1_sorted(E4(j,3),2))-phi_DC(X1_sorted(E4(j,1),2));
 
                 In(step,1) = In(step,1) ...
-                    - ncoeff*edgeE4(j,1)/lenE4(j,1)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)*width...
-                    - ncoeff*edgeE4(j,3)/lenE4(j,3)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2)*width;
+                    - ncoeff*edgeE4(j,1)/lenE4(j,1)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)*width...
+                    - ncoeff*edgeE4(j,3)/lenE4(j,3)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt)*width;
                 Ip(step,1) = Ip(step,1) ...
-                    - pcoeff*edgeE4(j,1)/lenE4(j,1)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)*width...
-                    - pcoeff*edgeE4(j,3)/lenE4(j,3)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2)*width;
+                    - pcoeff*edgeE4(j,1)/lenE4(j,1)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)*width...
+                    - pcoeff*edgeE4(j,3)/lenE4(j,3)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt)*width;
                 Id(step,1) = Id(step,1) ...
                     - esi*e0*edgeE4(j,1)/lenE4(j,1)*(dphi(X1_sorted(E4(j,2),2))-dphi(X1_sorted(E4(j,1),2)) - (old_dphi(X1_sorted(E4(j,2),2))-old_dphi(X1_sorted(E4(j,1),2)))) / deltaT*width...
                     - esi*e0*edgeE4(j,3)/lenE4(j,3)*(dphi(X1_sorted(E4(j,3),2))-dphi(X1_sorted(E4(j,1),2)) - (old_dphi(X1_sorted(E4(j,3),2))-old_dphi(X1_sorted(E4(j,1),2)))) / deltaT*width;
 
             elseif fcon == 2
-                n_DC_av1 = (n_DC(f2)+n_DC(f3))/2;
-                n_DC_av2 = (n_DC(f2)+n_DC(f1))/2;
-                dn_av1 = (dn(f2)+dn(f3))/2;
-                dn_av2 = (dn(f2)+dn(f1))/2;
+                n_DC_av1 = 0.5*(n_DC(f3)+n_DC(f2));
+                n_DC_av2 = 0.5*(n_DC(f1)+n_DC(f2));
+                dn_av1 = 0.5*(dn(f3)+dn(f2));
+                dn_av2 = 0.5*(dn(f1)+dn(f2));
                 ddn1 = dn(f3)-dn(f2);
                 ddn2 = dn(f1)-dn(f2);
 
-                p_DC_av1 = (p_DC(f2)+p_DC(f3))/2;
-                p_DC_av2 = (p_DC(f2)+p_DC(f1))/2;
-                dp_av1 = (dp(f2)+dp(f3))/2;
-                dp_av2 = (dp(f2)+dp(f1))/2;
+                p_DC_av1 = 0.5*(p_DC(f2)+p_DC(f3));
+                p_DC_av2 = 0.5*(p_DC(f2)+p_DC(f1));
+                dp_av1 = 0.5*(dp(f2)+dp(f3));
+                dp_av2 = 0.5*(dp(f2)+dp(f1));
                 ddp1 = dp(f3)-dp(f2);
                 ddp2 = dp(f1)-dp(f2);
 
@@ -592,27 +588,27 @@ for step=1:totalNstep+1
                 dphi_DC2 = phi_DC(X1_sorted(E4(j,1),2))-phi_DC(X1_sorted(E4(j,2),2));
 
                 In(step,1) = In(step,1) ...
-                    - ncoeff*edgeE4(j,2)/lenE4(j,2)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)*width...
-                    - ncoeff*edgeE4(j,1)/lenE4(j,1)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2)*width;
+                    - ncoeff*edgeE4(j,2)/lenE4(j,2)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)*width...
+                    - ncoeff*edgeE4(j,1)/lenE4(j,1)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt)*width;
                 Ip(step,1) = Ip(step,1) ...
-                    - pcoeff*edgeE4(j,2)/lenE4(j,2)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)*width...
-                    - pcoeff*edgeE4(j,1)/lenE4(j,1)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2)*width;
+                    - pcoeff*edgeE4(j,2)/lenE4(j,2)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)*width...
+                    - pcoeff*edgeE4(j,1)/lenE4(j,1)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt)*width;
                 Id(step,1) = Id(step,1) ...
-                    - esi*e0*edgeE4(j,2)/lenE4(j,2)*(dphi(X1_sorted(E4(j,3),2))- dphi(X1_sorted(E4(j,2),2)) - (old_dphi(X1_sorted(E4(j,3),2))-old_dphi(X1_sorted(E4(j,2),2)))) / deltaT*width...
-                    - esi*e0*edgeE4(j,1)/lenE4(j,1)*(dphi(X1_sorted(E4(j,1),2))- dphi(X1_sorted(E4(j,2),2)) - (old_dphi(X1_sorted(E4(j,1),2))-old_dphi(X1_sorted(E4(j,2),2)))) / deltaT*width;
+                    - esi*e0*edgeE4(j,2)/lenE4(j,2)*(dphi(X1_sorted(E4(j,3),2))- dphi(X1_sorted(E4(j,2),2)) - (old_dphi(X1_sorted(E4(j,3),2)) - old_dphi(X1_sorted(E4(j,2),2)))) / deltaT*width...
+                    - esi*e0*edgeE4(j,1)/lenE4(j,1)*(dphi(X1_sorted(E4(j,1),2))- dphi(X1_sorted(E4(j,2),2)) - (old_dphi(X1_sorted(E4(j,1),2)) - old_dphi(X1_sorted(E4(j,2),2)))) / deltaT*width;
 
             elseif fcon == 3
-                n_DC_av1 = (n_DC(f3)+n_DC(f1))/2;
-                n_DC_av2 = (n_DC(f3)+n_DC(f2))/2;
-                dn_av1 = (dn(f3)+dn(f1))/2;
-                dn_av2 = (dn(f3)+dn(f2))/2;
+                n_DC_av1 = 0.5*(n_DC(f3)+n_DC(f1));
+                n_DC_av2 = 0.5*(n_DC(f3)+n_DC(f2));
+                dn_av1 = 0.5*(dn(f3)+dn(f1));
+                dn_av2 = 0.5*(dn(f3)+dn(f2));
                 ddn1 = dn(f1)-dn(f3);
                 ddn2 = dn(f2)-dn(f3);
 
-                p_DC_av1 = (p_DC(f3)+p_DC(f1))/2;
-                p_DC_av2 = (p_DC(f3)+p_DC(f2))/2;
-                dp_av1 = (dp(f3)+dp(f1))/2;
-                dp_av2 = (dp(f3)+dp(f2))/2;
+                p_DC_av1 = 0.5*(p_DC(f3)+p_DC(f1));
+                p_DC_av2 = 0.5*(p_DC(f3)+p_DC(f2));
+                dp_av1 = 0.5*(dp(f3)+dp(f1));
+                dp_av2 = 0.5*(dp(f3)+dp(f2));
                 ddp1 = dp(f1)-dp(f3);
                 ddp2 = dp(f2)-dp(f3);
 
@@ -622,17 +618,17 @@ for step=1:totalNstep+1
                 dphi_DC2 = phi_DC(X1_sorted(E4(j,2),2))-phi_DC(X1_sorted(E4(j,3),2));
 
                 In(step,1) = In(step,1) ...
-                    - ncoeff*edgeE4(j,3)/lenE4(j,3)*(n_DC_av1/Vt*ddphi1 + dn_av1/Vt*dphi_DC1 - ddn1)*width...
-                    - ncoeff*edgeE4(j,2)/lenE4(j,2)*(n_DC_av2/Vt*ddphi2 + dn_av2/Vt*dphi_DC2 - ddn2)*width;
+                    - ncoeff*edgeE4(j,3)/lenE4(j,3)*(n_DC_av1*ddphi1 + dn_av1*dphi_DC1 - ddn1*Vt)*width...
+                    - ncoeff*edgeE4(j,2)/lenE4(j,2)*(n_DC_av2*ddphi2 + dn_av2*dphi_DC2 - ddn2*Vt)*width;
                 Ip(step,1) = Ip(step,1) ...
-                    - pcoeff*edgeE4(j,3)/lenE4(j,3)*(p_DC_av1/Vt*ddphi1 + dp_av1/Vt*dphi_DC1 + ddp1)*width...
-                    - pcoeff*edgeE4(j,2)/lenE4(j,2)*(p_DC_av2/Vt*ddphi2 + dp_av2/Vt*dphi_DC2 + ddp2)*width;
+                    - pcoeff*edgeE4(j,3)/lenE4(j,3)*(p_DC_av1*ddphi1 + dp_av1*dphi_DC1 + ddp1*Vt)*width...
+                    - pcoeff*edgeE4(j,2)/lenE4(j,2)*(p_DC_av2*ddphi2 + dp_av2*dphi_DC2 + ddp2*Vt)*width;
                 Id(step,1) = Id(step,1) ...
-                    - esi*e0*edgeE4(j,3)/lenE4(j,3)*(dphi(X1_sorted(E4(j,1),2))-dphi(X1_sorted(E4(j,3),2)) - (old_dphi(X1_sorted(E4(j,1),2))-old_dphi(X1_sorted(E4(j,3),2)))) / deltaT*width...
-                    - esi*e0*edgeE4(j,2)/lenE4(j,2)*(dphi(X1_sorted(E4(j,2),2))-dphi(X1_sorted(E4(j,3),2)) - (old_dphi(X1_sorted(E4(j,2),2))-old_dphi(X1_sorted(E4(j,3),2)))) / deltaT*width;
+                    - esi*e0*edgeE4(j,3)/lenE4(j,3)*(dphi(X1_sorted(E4(j,1),2)) - dphi(X1_sorted(E4(j,3),2)) - (old_dphi(X1_sorted(E4(j,1),2)) - old_dphi(X1_sorted(E4(j,3),2)))) / deltaT*width...
+                    - esi*e0*edgeE4(j,2)/lenE4(j,2)*(dphi(X1_sorted(E4(j,2),2)) - dphi(X1_sorted(E4(j,3),2)) - (old_dphi(X1_sorted(E4(j,2),2)) - old_dphi(X1_sorted(E4(j,3),2)))) / deltaT*width;
             end
         end
     end
 end
 
-I = In + Ip + Id;
+I = In + Id;
