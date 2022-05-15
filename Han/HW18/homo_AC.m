@@ -5,7 +5,7 @@ load("ramping_information.mat")
 %%% homogenoeous AC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % transient edit part
-freq = 1e12;
+freq = 10e12;
 cycle = 2;
 T = 1/freq;
 Vamp = 1e-3;
@@ -596,3 +596,8 @@ for step=1:totalNstep+1
 end
 
 I = In + Id;
+
+ansmat = zeros(3,1);
+ansmat(1,1) = max(I);
+ansmat(2,1) = max(In);
+ansmat(3,1) = max(Id);
