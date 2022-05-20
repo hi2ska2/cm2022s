@@ -2,9 +2,8 @@ clear
 load("ramping_information.mat")
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%  homo AC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% homo AC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% transient edit part
 freq = 1e12;
 cycle = 2;
 T = 1/freq;
@@ -42,7 +41,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
-        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
             - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2));
@@ -53,7 +52,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
-        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
+        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
             - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3));
@@ -64,7 +63,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
-        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + 0.25*(edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3));
 
     elseif i > E2row && i <= (E2row + E3row)
         Jaco_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1))...
@@ -76,7 +75,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
-        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
             - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2));
@@ -87,7 +86,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
-        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
+        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
             - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3));
@@ -98,7 +97,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
-        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + 0.25*(edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3));
 
     elseif i > (E2row+E3row) && i <= Esirow
         Jaco_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1), X2(3*(X1_sorted(Esi(i,1),2))-2,1))...
@@ -110,7 +109,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,1),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,1),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,1),2)));
-        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,1),2)) = saveexl(X1_sorted(Esi(i,1),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,3)*lenEsi(i,3));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1), X2(3*(X1_sorted(Esi(i,2),2))-2,1))...
             - esi*(edgeEsi(i,1)/lenEsi(i,1) + edgeEsi(i,2)/lenEsi(i,2));
@@ -121,7 +120,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,2),2))-2,1),1)...
             + esi*edgeEsi(i,1)/lenEsi(i,1)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,2),2)))...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,3),2))-dphi(X1_sorted(Esi(i,2),2)));
-        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + (edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2))/4;
+        saveexl(X1_sorted(Esi(i,2),2)) = saveexl(X1_sorted(Esi(i,2),2)) + 0.25*(edgeEsi(i,1)*lenEsi(i,1) + edgeEsi(i,2)*lenEsi(i,2));
 
         Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1)) = Jaco_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1), X2(3*(X1_sorted(Esi(i,3),2))-2,1))...
             - esi*(edgeEsi(i,2)/lenEsi(i,2) + edgeEsi(i,3)/lenEsi(i,3));
@@ -132,7 +131,7 @@ for i=1:Esirow
         Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1) =  Res_ac(X2(3*(X1_sorted(Esi(i,3),2))-2,1),1)...
             + esi*edgeEsi(i,2)/lenEsi(i,2)*(dphi(X1_sorted(Esi(i,2),2))-dphi(X1_sorted(Esi(i,3),2)))...
             + esi*edgeEsi(i,3)/lenEsi(i,3)*(dphi(X1_sorted(Esi(i,1),2))-dphi(X1_sorted(Esi(i,3),2)));
-        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + (edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3))/4;
+        saveexl(X1_sorted(Esi(i,3),2)) = saveexl(X1_sorted(Esi(i,3),2)) + 0.25*(edgeEsi(i,2)*lenEsi(i,2) + edgeEsi(i,3)*lenEsi(i,3));
     end
 end
 
@@ -195,7 +194,7 @@ for i=1:Esirow
 
             % n ac part
             Jaco_ac(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,1),2)-1,1), X2(3*X1_sorted(Esi(i,1),2)-1,1))...
-                - q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(2*pi*freq*iN);
+                - 0.25*q*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(2*pi*freq*iN);
 
         elseif j == 2 %%% 2nd element
 
@@ -232,7 +231,7 @@ for i=1:Esirow
 
             % n ac part
             Jaco_ac(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,2),2)-1,1), X2(3*X1_sorted(Esi(i,2),2)-1,1))...
-                - q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(2*pi*freq*iN);
+                - 0.25*q*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(2*pi*freq*iN);
 
         elseif j == 3  %%% 3rd element
 
@@ -269,7 +268,7 @@ for i=1:Esirow
 
             % n ac part
             Jaco_ac(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,3),2)-1,1), X2(3*X1_sorted(Esi(i,3),2)-1,1))...
-                - q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(2*pi*freq*iN);
+                - 0.25*q*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(2*pi*freq*iN);
         end
     end
 end
@@ -319,7 +318,7 @@ for i=1:Esirow
 
             % p AC part
             Jaco_ac(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,1),2),1), X2(3*X1_sorted(Esi(i,1),2),1))...
-                + q/4*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(2*pi*freq*iN);
+                + 0.25*q*(lenEsi(i,1)*edgeEsi(i,1) + lenEsi(i,3)*edge(i,3))*(2*pi*freq*iN);
 
         elseif j == 2 %%% 2nd element
 
@@ -356,7 +355,7 @@ for i=1:Esirow
 
             % p AC part
             Jaco_ac(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,2),2),1), X2(3*X1_sorted(Esi(i,2),2),1))...
-                + q/4*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(2*pi*freq*iN);
+                + 0.25*q*(lenEsi(i,2)*edgeEsi(i,2) + lenEsi(i,1)*edge(i,1))*(2*pi*freq*iN);
 
         elseif j == 3 %%% 3rd element
 
@@ -393,7 +392,7 @@ for i=1:Esirow
 
             % p AC part
             Jaco_ac(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1)) = Jaco_ac(X2(3*X1_sorted(Esi(i,3),2),1), X2(3*X1_sorted(Esi(i,3),2),1))...
-                + q/4*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(2*pi*freq*iN);
+                + 0.25*q*(lenEsi(i,3)*edgeEsi(i,3) + lenEsi(i,2)*edge(i,2))*(2*pi*freq*iN);
         end
     end
 end
@@ -447,13 +446,19 @@ Rmatrix = spdiags(Rvector,0,size(X2_sorted,1),size(X2_sorted,1));
 Jaco_scaled = Rmatrix * Jaco_scaled;
 Res_scaled = Rmatrix * Res_ac;
 
-update_scaled = Jaco_scaled \ (-Res_scaled);
+update_scaled = Jaco_scaled \ (Res_scaled);
 update = Cmatrix * update_scaled;
 
+% for ii=1:VErow
+%     dphi(ii,1) = dphi(ii,1) + update(3*ii-2);
+%     dn(ii,1) = dn(ii,1) + update(3*ii-1);
+%     dp(ii,1) = dp(ii,1) + update(3*ii);
+% end
+
 for ii=1:VErow
-    dphi(ii,1) = dphi(ii,1) + update(3*ii-2);
-    dn(ii,1) = dn(ii,1) + update(3*ii-1);
-    dp(ii,1) = dp(ii,1) + update(3*ii);
+    dphi(ii,1) = update(3*ii-2);
+    dn(ii,1) = update(3*ii-1);
+    dp(ii,1) = update(3*ii);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
